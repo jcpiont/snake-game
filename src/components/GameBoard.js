@@ -10,6 +10,7 @@ const GameBoard = () => {
     const [food, setFood] = useState({ x: 10, y: 10 });
     const [dir, setDir] = useState({ x: 0, y: 1 });
     const inputQueue = useRef([]);
+    const [score, setScore] = useState(0);
 
     const moveSnake = useCallback(() => {
         // Process all direction changes in the queue
@@ -35,6 +36,7 @@ const GameBoard = () => {
                 y: Math.floor(Math.random() * numRows)
             });
             newSnake = [head, ...snake];
+            setScore(prevScore => prevScore + 10);
         }
 
         // Check for snake going out of bounds or eating itself
@@ -46,6 +48,7 @@ const GameBoard = () => {
             // Reset Game
             setSnake([{ x: 5, y: 5 }]);
             setDir({ x: 0, y: 1 });
+            setScore(0);
         } else {
             setSnake(newSnake);
         }
@@ -81,28 +84,33 @@ const GameBoard = () => {
     }, [dir]);
 
     useEffect(() => {
-        const gameInterval = setInterval(moveSnake, 150);
+        const gameInterval = setInterval(moveSnake, 125);
         return () => clearInterval(gameInterval);
     }, [moveSnake]); // Now it only depends on moveSnake.
 
 
     return (
-        <div className="GameBoard">
-            {Array.from({ length: numRows }).map((_, y) =>
-                Array.from({ length: numRows }).map((_, x) => (
-                    <div
-                        key={`cell-${x}-${y}`}
-                        className="cell"
-                        style={{
-                            width: `${cellSize}px`,
-                            height: `${cellSize}px`
-                        }}
-                    >
-                        {snake.some(pos => pos.x === x && pos.y === y) && <Snake />}
-                        {food.x === x && food.y === y && <Food />}
-                    </div>
-                ))
-            )}
+        <div>
+            <div className="score-board">
+                Score: {score}
+            </div>
+            <div className="game-board">
+                {Array.from({ length: numRows }).map((_, y) =>
+                    Array.from({ length: numRows }).map((_, x) => (
+                        <div
+                            key={`cell-${x}-${y}`}
+                            className="cell"
+                            style={{
+                                width: `${cellSize}px`,
+                                height: `${cellSize}px`
+                            }}
+                        >
+                            {snake.some(pos => pos.x === x && pos.y === y) && <Snake />}
+                            {food.x === x && food.y === y && <Food />}
+                        </div>
+                    ))
+                )}
+            </div>
         </div>
     );
 };
