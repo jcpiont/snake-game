@@ -6,7 +6,7 @@ const numRows = 20;
 const cellSize = 20;
 
 const GameBoard = () => {
-    const [snake, setSnake] = useState([{ x: 5, y: 5 }]);
+    const [snake, setSnake] = useState([{ x: 5, y: 3 }]);
     const [food, setFood] = useState({ x: 10, y: 10 });
     const [dir, setDir] = useState({ x: 0, y: 1 });
     const inputQueue = useRef([]);
@@ -92,7 +92,7 @@ const GameBoard = () => {
     return (
         <div>
             <div className="score-board">
-                Score: {score}
+                <div className="score">Score: {score}</div>
             </div>
             <div className="game-board">
                 {Array.from({ length: numRows }).map((_, y) =>
