@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import Snake from './Snake';
-import Food from './Food';
 import Cell from './Cell';
 
 const numRows = 20;
