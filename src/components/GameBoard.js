@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Snake from './Snake';
 import Food from './Food';
+import Cell from './Cell';
 
 const numRows = 20;
 const cellSize = 20;
@@ -11,6 +12,17 @@ const GameBoard = () => {
     const [dir, setDir] = useState({ x: 0, y: 1 });
     const inputQueue = useRef([]);
     const [score, setScore] = useState(0);
+    const [gameOver, setGameOver] = useState(false);
+    const [isGameRunning, setIsGameRunning] = useState(true);
+
+    const restartGame = () => {
+        setSnake([{ x: 5, y: 5 }]);
+        setDir({ x: 0, y: 1 });
+        setScore(0);
+        setGameOver(false);
+        setIsGameRunning(true);
+    };
+
 
     const moveSnake = useCallback(() => {
         // Process all direction changes in the queue
@@ -46,9 +58,8 @@ const GameBoard = () => {
             snake.some(s => s.x === head.x && s.y === head.y)
         ) {
             // Reset Game
-            setSnake([{ x: 5, y: 5 }]);
-            setDir({ x: 0, y: 1 });
-            setScore(0);
+            setGameOver(true);
+            setIsGameRunning(false);
         } else {
             setSnake(newSnake);
         }
@@ -84,9 +95,11 @@ const GameBoard = () => {
     }, [dir]);
 
     useEffect(() => {
-        const gameInterval = setInterval(moveSnake, 125);
-        return () => clearInterval(gameInterval);
-    }, [moveSnake]); // Now it only depends on moveSnake.
+        if (isGameRunning) {
+            const gameInterval = setInterval(moveSnake, 150);
+            return () => clearInterval(gameInterval);
+        }
+    }, [moveSnake, isGameRunning]); // Now it only depends on moveSnake.
 
 
     return (
@@ -94,20 +107,18 @@ const GameBoard = () => {
             <div className="score-board">
                 <div className="score">Score: {score}</div>
             </div>
+            {gameOver && <div className={gameOver ? "game-over active" : "game-over"}>
+                <div className="game-over-content">
+                    <h2>Game Over!</h2>
+                    <p>Final Score: {score}</p>
+                    <button onClick={restartGame}>Restart</button>
+                </div>
+            </div>
+            }
             <div className="game-board">
                 {Array.from({ length: numRows }).map((_, y) =>
                     Array.from({ length: numRows }).map((_, x) => (
-                        <div
-                            key={`cell-${x}-${y}`}
-                            className="cell"
-                            style={{
-                                width: `${cellSize}px`,
-                                height: `${cellSize}px`
-                            }}
-                        >
-                            {snake.some(pos => pos.x === x && pos.y === y) && <Snake />}
-                            {food.x === x && food.y === y && <Food />}
-                        </div>
+                        <Cell x={x} y={y} cellSize={cellSize} snake={snake} food={food} key={`cell-${x}-${y}`} />
                     ))
                 )}
             </div>
