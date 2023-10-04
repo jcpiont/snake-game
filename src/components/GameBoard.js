@@ -1,26 +1,26 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import Cell from './Cell';
+import GameCanvas from './GameCanvas';
 
-const numRows = 20;
-const cellSize = 20;
+const objectSize = 10;
+const canvasSize = 250;
+const speed = 10;
 
 const GameBoard = () => {
-    const [snake, setSnake] = useState([{ x: 5, y: 3 }]);
-    const [food, setFood] = useState({ x: 10, y: 10 });
-    const [dir, setDir] = useState({ x: 0, y: 1 });
+    const [snake, setSnake] = useState([{ x: 10, y: 30, size: objectSize }]);
+    const [food, setFood] = useState({ x: 100, y: 100, size: objectSize });
+    const [dir, setDir] = useState({ x: speed, y: 0 });
     const inputQueue = useRef([]);
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(false);
     const [isGameRunning, setIsGameRunning] = useState(true);
 
     const restartGame = () => {
-        setSnake([{ x: 5, y: 5 }]);
-        setDir({ x: 0, y: 1 });
+        setSnake([{ x: 10, y: 30, size: 10 }]);
+        setDir({ x: speed, y: 0 });
         setScore(0);
         setGameOver(false);
         setIsGameRunning(true);
     };
-
 
     const moveSnake = useCallback(() => {
         // Process all direction changes in the queue
@@ -40,10 +40,12 @@ const GameBoard = () => {
         let newSnake = snake.map(pos => ({ ...pos }));
         newSnake = [head, ...newSnake.slice(0, -1)];
 
-        if (head.x === food.x && head.y === food.y) {
+        if (head.x < food.x + food.size && head.x + head.size > food.x &&
+            head.y < food.y + food.size && head.y + head.size > food.y) {
             setFood({
-                x: Math.floor(Math.random() * numRows),
-                y: Math.floor(Math.random() * numRows)
+                x: Math.floor(Math.random() * canvasSize / objectSize) * objectSize,
+                y: Math.floor(Math.random() * canvasSize / objectSize) * objectSize,
+                size: objectSize
             });
             newSnake = [head, ...snake];
             setScore(prevScore => prevScore + 10);
@@ -51,8 +53,8 @@ const GameBoard = () => {
 
         // Check for snake going out of bounds or eating itself
         if (
-            head.x < 0 || head.x >= numRows ||
-            head.y < 0 || head.y >= numRows ||
+            head.x < 0 || head.x >= canvasSize ||
+            head.y < 0 || head.y >= canvasSize ||
             snake.some(s => s.x === head.x && s.y === head.y)
         ) {
             // Reset Game
@@ -68,16 +70,16 @@ const GameBoard = () => {
             let newDir = null;
             switch (e.key) {
                 case 'ArrowUp':
-                    if (dir.y === 0) newDir = { x: 0, y: -1 };
+                    if (dir.y === 0) newDir = { x: 0, y: -speed };
                     break;
                 case 'ArrowDown':
-                    if (dir.y === 0) newDir = { x: 0, y: 1 };
+                    if (dir.y === 0) newDir = { x: 0, y: speed };
                     break;
                 case 'ArrowLeft':
-                    if (dir.x === 0) newDir = { x: -1, y: 0 };
+                    if (dir.x === 0) newDir = { x: -speed, y: 0 };
                     break;
                 case 'ArrowRight':
-                    if (dir.x === 0) newDir = { x: 1, y: 0 };
+                    if (dir.x === 0) newDir = { x: speed, y: 0 };
                     break;
                 default:
                     break;
@@ -94,7 +96,7 @@ const GameBoard = () => {
 
     useEffect(() => {
         if (isGameRunning) {
-            const gameInterval = setInterval(moveSnake, 150);
+            const gameInterval = setInterval(moveSnake, 100);
             return () => clearInterval(gameInterval);
         }
     }, [moveSnake, isGameRunning]); // Now it only depends on moveSnake.
@@ -114,11 +116,7 @@ const GameBoard = () => {
             </div>
             }
             <div className="game-board">
-                {Array.from({ length: numRows }).map((_, y) =>
-                    Array.from({ length: numRows }).map((_, x) => (
-                        <Cell x={x} y={y} cellSize={cellSize} snake={snake} food={food} key={`cell-${x}-${y}`} />
-                    ))
-                )}
+                <GameCanvas snake={snake} food={food} width={canvasSize} height={canvasSize} />
             </div>
         </div>
     );
