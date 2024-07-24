@@ -16,9 +16,9 @@ function GameCanvas({ snake, food, width, height }) {
 
         // Draw snake
         context.fillStyle = 'green';
-        for (let segment of snake) {
+        snake.forEach((segment) => {
             context.fillRect(segment.x, segment.y, segment.size, segment.size);
-        }
+        });
 
         // Draw food
         context.fillStyle = 'red';
