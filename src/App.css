@@ -7,75 +7,80 @@
 }
 
 .score-board {
-  font-size: 1.5em;
   text-align: center;
-  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom: 2px solid #ccc;
+  margin-bottom: 15px; /* Add some space below the scoreboard */
 }
 
 .score {
-  font-size: 1em;
+  font-size: 1.5em;
   font-weight: bold;
-  color: white;
-  background-color: #333;
-  padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  color: #333;
 }
 
 .game-over {
-  position: absolute;
+  position: fixed; /* Or absolute if .game-board is relative */
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.75); /* semi-transparent black */
+  background-color: rgba(0, 0, 0, 0.75); /* Semi-transparent overlay */
   display: flex;
-  align-items: center;
   justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s, visibility 0.3s; /* smooth transition for opacity & visibility */
-  z-index: 10; /* making sure it's on top of other elements */
+  align-items: center;
+  z-index: 100; /* Ensure it's on top */
+  /* Removed opacity and visibility for direct control via active class if needed,
+     but GameBoard.js directly renders it or not, so direct properties are fine.
+     If conditional rendering in React is not used, then .active class would be needed.
+     Given current GameBoard.js, opacity/visibility transitions are not strictly necessary
+     as the component is conditionally rendered. */
 }
 
+/* .game-over.active class can be removed if GameBoard.js handles conditional rendering */
+/*
 .game-over.active {
   opacity: 1;
   visibility: visible;
 }
+*/
 
 .game-over-content {
-  background: #ffffff;
-  padding: 20px 40px;
-  border-radius: 15px;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 10px;
   text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .game-over-content h2 {
-  margin: 0;
   font-size: 2em;
-  font-weight: bold;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  /* Removed margin: 0; and font-weight: bold; as they are often default or can be fine-tuned if needed */
 }
 
 .game-over-content p {
   font-size: 1.2em;
-  color: #777;
-  margin-bottom: 20px;
+  color: #555; /* Slightly darker than #777 */
+  margin-bottom: 25px;
 }
 
 .game-over-content button {
-  background: #007BFF;
-  color: #fff;
+  background-color: #4CAF50; /* Green */
   border: none;
-  padding: 10px 20px;
+  color: white;
+  padding: 12px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
   font-size: 1em;
   border-radius: 5px;
   cursor: pointer;
-  transition: background 0.2s; 
+  transition: background-color 0.3s ease;
 }
 
 .game-over-content button:hover {
-  background: #0056b3;
+  background-color: #45a049;
 }
